@@ -5,12 +5,24 @@ from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.ollama import Ollama
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.core.schema import MetadataMode
+from transformers import AutoModel, AutoTokenizer
+
+checkpoint = "Salesforce/codet5p-110m-embedding"
+device = "cpu"  # for GPU usage or "cpu" for CPU usage
+
+#tokenizer = AutoTokenizer.from_pretrained(checkpoint, trust_remote_code=True)
+#model = AutoModel.from_pretrained(checkpoint, trust_remote_code=True).to(device)
+
+# Load model directly
+#from transformers import CodeT5p_Embedding
+#model = CodeT5p_Embedding.from_pretrained("Salesforce/codet5p-110m-embedding", trust_remote_code=True)
 
 import logging
 import sys
 
 PROMPT_FILE = "prompt.txt"
 OUTPUT_FILE = "out.txt"
+RAG_RESULT_FILE = "ragprompt.txt"
 
 STAR_LINE   = "**************************************"
 
@@ -26,12 +38,19 @@ def log(name: str) -> None:
 log("reading directory")
 documents = SimpleDirectoryReader("quad", recursive=True).load_data()
 
+#print(documents)
+#inputs = tokenizer.encode(documents, return_tensors="pt").to(device)
+#embedding = model(inputs)[0]
+
 log("setting model")
-# bge-base embedding model
 Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")
 
+#Settings.embed_model = model
+#Settings.tokenizer = tokenizer
+
+#print(type(model), "\n", type(HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")))
+
 log("setting llm")
-# ollama
 Settings.llm = Ollama(model="llama3", request_timeout=360.0) #, max_tokens=512)
 #Settings.num_output = 512
 
@@ -41,7 +60,6 @@ Settings.text_splitter = text_splitter
 
 log("indexing")
 start_index_time = time.time()
-# per-index
 index = VectorStoreIndex.from_documents(documents, transformations=[text_splitter])
 index_time = time.time() - start_index_time
 
@@ -49,30 +67,33 @@ index_time = time.time() - start_index_time
 #nodes = retriever.retrieve("Who is Paul Graham?")
 
 log("building query engine")
-query_engine = index.as_query_engine(streaming=False)
+query_engine = index.as_query_engine(streaming=True)
 
 log("asking question")
 in_stream = open(PROMPT_FILE, "r")
 prompt = in_stream.read()
 in_stream.close()
 
-start_query_time = time.time()
-response = query_engine.query(prompt)
-query_time = time.time() - start_query_time
-
-
-#response = query_engine.query("What did the author do growing up?")
-
-#log("giving response")
-#response.print_response_stream()
-
 out_stream = open(OUTPUT_FILE, "w")
-out_stream.write(response.__str__())
+rag_stream = open(RAG_RESULT_FILE, "w")
+
+#dictionary = query_engine._get_prompts()
+
+
+for i in range(1):
+    start_query_time = time.time()
+    response = query_engine.query(prompt)
+    query_time = time.time() - start_query_time
+
+    response.print_response_stream()
+    out_stream.write(response.__str__())
+
+    print("QUERY    TIME: ", query_time)
+
+
 out_stream.close()
+rag_stream.close()
 
 print("INDEXING TIME: ", index_time)
-print("QUERY    TIME: ", query_time)
 
-#print("--------------------------------------------------------\n",
-#       response,
-#      "\n--------------------------------------------------------")
+print("-----------------------\n", dictionary.items())
