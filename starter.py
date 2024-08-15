@@ -51,7 +51,8 @@ Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")
 #print(type(model), "\n", type(HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")))
 
 log("setting llm")
-Settings.llm = Ollama(model="llama3", request_timeout=360.0) #, max_tokens=512)
+#Settings.llm = Ollama(model="llama3", request_timeout=360.0) #, max_tokens=512)
+Settings.llm = Ollama(model="deepseek-coder-v2", request_timeout=360.0) #, max_tokens=512)
 #Settings.num_output = 512
 
 log("setting parser")
@@ -67,7 +68,7 @@ index_time = time.time() - start_index_time
 #nodes = retriever.retrieve("Who is Paul Graham?")
 
 log("building query engine")
-query_engine = index.as_query_engine(streaming=True)
+query_engine = index.as_query_engine(streaming=False)
 
 log("asking question")
 in_stream = open(PROMPT_FILE, "r")
@@ -77,15 +78,13 @@ in_stream.close()
 out_stream = open(OUTPUT_FILE, "w")
 rag_stream = open(RAG_RESULT_FILE, "w")
 
-#dictionary = query_engine._get_prompts()
 
-
-for i in range(1):
+for i in range(10):
     start_query_time = time.time()
     response = query_engine.query(prompt)
     query_time = time.time() - start_query_time
 
-    response.print_response_stream()
+    #response.print_response_stream()
     out_stream.write(response.__str__())
 
     print("QUERY    TIME: ", query_time)
@@ -95,5 +94,3 @@ out_stream.close()
 rag_stream.close()
 
 print("INDEXING TIME: ", index_time)
-
-print("-----------------------\n", dictionary.items())
