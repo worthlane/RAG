@@ -68,7 +68,7 @@ index_time = time.time() - start_index_time
 #nodes = retriever.retrieve("Who is Paul Graham?")
 
 log("building query engine")
-query_engine = index.as_query_engine(streaming=False)
+query_engine = index.as_query_engine(streaming=True)
 
 log("asking question")
 in_stream = open(PROMPT_FILE, "r")
@@ -79,12 +79,12 @@ out_stream = open(OUTPUT_FILE, "w")
 rag_stream = open(RAG_RESULT_FILE, "w")
 
 
-for i in range(10):
+for i in range(1):
     start_query_time = time.time()
     response = query_engine.query(prompt)
     query_time = time.time() - start_query_time
 
-    #response.print_response_stream()
+    response.print_response_stream()
     out_stream.write(response.__str__())
 
     print("QUERY    TIME: ", query_time)
