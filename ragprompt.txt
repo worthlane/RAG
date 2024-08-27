@@ -1,0 +1,34 @@
+> Source (Node id: 94e17bb1-b5ba-43c9-b0e6-ac268bd9ad01): </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>c</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="struct_quad_solutions.html">QuadSolutions</a> *&#160;</td>
+          <td class="paramname"><em>ans</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+        ...
+
+> Source (Node id: f995379e-da80-4549-a408-58be0ed40621): </td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Solves linear equatiion (bx + c = 0) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td>coefficient </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>coefficient </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="...

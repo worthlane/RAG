@@ -1,0 +1,10 @@
+Here is a possible implementation of the `solve_linear_equation` function:
+
+```cpp
+double solve_linear_equation(double a, double b, double c) {
+    const QuadSolutions* ans;
+    // Your implementation here
+}
+```
+
+Note that this function takes three parameters: `a`, `b`, and `c`, which represent the coefficients of the quadratic equation. The return type is `double`, which represents the solution to the equation.

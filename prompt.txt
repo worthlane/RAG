@@ -1,4 +1,2 @@
-I am writing my own project, that must solve quadratic equations.
-Now I'm working on file, that contains code for file, named "solver".
-Can you write an implementation of function "QuadraticSolver", that must solve quadratic equation.
+Can you write an implementation of function, that must solve linear equation.
 equation format: a * x^2 + b * x + c = 0. Give only code in your answer.

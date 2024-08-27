@@ -5,18 +5,69 @@ In this project I'm trying to make good AI code generator (analogue of [github c
 ![](assets/rag.webp)
 Image source: [anyscale](https://www.anyscale.com/blog/a-comprehensive-guide-for-building-rag-based-llm-applications-part-1)
 
-# Components
+# Improvements
 
 ## Embeddings
 
 Embedding models take text as input, and return a long list of numbers used to capture the semantics of the text. So it can be important what embedding are we using. In text it is not very important in what order are the words, but in code it could break everything. We can choose one of this embeddings:
 
 1. [BAAI/bge-base-en-v1.5](https://huggingface.co/Salesforce/codet5p-110m-embedding)
-2. [Salesforce/codet5p-110m-embedding](https://huggingface.co/Salesforce/codet5p-110m-embedding)
+2. [codesage/codesage-small](codesage/codesage-small)
 
 (I'm testing only free versions, so I skipped the [ada-002](https://platform.openai.com/docs/guides/embeddings))
 
-To test these
+Additional information for RAG contains my [project](https://github.com/worthlane/quadratic_equation) from github, which solves quadratic equation. I'll try to describe some function by words and compare what context relates to this prompt with different embeddings. Context we can see by function from ```Response``` class. I've found it in ```llamaindex``` source code:
+
+```python
+class Response:
+    """Response object.
+
+    Returned if streaming=False.
+
+    Attributes:
+        response: The response text.
+
+    """
+
+    ...
+
+    def get_formatted_sources(self, length: int = 100) -> str:
+        """Get formatted sources text."""
+        ...
+```
+
+### Tests
+
+#### BAAI/bge-base-en-v1.5
+
+After tests I've noticed, that the context that program is finding, in the most cases is located in header files. I think that's because ```bge-base``` was made for text embedding, and it's hard for him to recognize code. My project has a lot of documentation, so, retriever gets information from header file, where documentation is located.
+
+#### codesage/codesage-small
+
+This embedding is not as popular as ```bge```, but it is specialized for finding code by text description. I've asked this function to do it's own quadratic equation solving implementation, but context it've found looks like:
+```
+</tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Solves linear equatiion (bx + c = 0) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td>coefficient </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>coefficient </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="...
+```
+
+This embedding is confused by html documentation code. So, what embedding you should use depends on documentation availability.
+
+If you have documentation, it will be better to use ``` BAAI/bge-base-en-v1.5```, because it is easy for this embedding to find text description in project. If there is no documentation, it will be better to use ```codesage/codesage-small```, because it is created for finding code by natural language.
+
+
 
 
 ## LLM
@@ -27,6 +78,7 @@ LLMs:
 1. Llama 3.1 (8B)
 2. Moondream 2 (1.4B)
 3. deepseek-coder-v2 (16B)
+3. Code Llama (7B)
 
 (I tested every model on MacBook Pro with 8gb of RAM)
 
@@ -41,8 +93,20 @@ This model is not as heavy as ```llama3```, so we can notice that in the query t
 ### deepseek-coder-v2
 Deepseek is the heaviest model I've tested here. It was actually created for code generation. But on the first launch it became very clear, that for my configuration this model works too slow (It generated one answer for 20 minutes). It can generate working and good code, but it is too slow, not even comparable with ```llama3```.
 
+### Code Llama
+The same situation as with ```deepseek```. It gives answers, that are not better or worse than ```llama3```, but execution time increased.
+
 After all these tests I've decided, that ```llama3``` is the best model for my configuration.
 
+## Prompt
+
+It's interesting to check, what prompt should we write to get the most efficient answers. Let's delete some function from our project and ask our program to recreate it. We have three variants:
+
+1. RAG-, prompt+ (We can add some context in prompt, like code from file where we had this function, and remove this file from documents).
+2. RAG+, prompt+ (We can add the context in prompt, but we wont delete file from documents).
+3. RAG+, prompt- (We can leave prompt without any context).
+
+Let's check which strategy generates code better.
 
 ## Execution time
 
@@ -66,3 +130,5 @@ def query(self, str_or_query_bundle: QueryType) -> RESPONSE_TYPE:
         )
         return query_result
 ```
+
+
