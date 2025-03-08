@@ -9,14 +9,14 @@ Image source: [anyscale](https://www.anyscale.com/blog/a-comprehensive-guide-for
 
 ## Embeddings
 
-Embedding models take text as input, and return a long list of numbers used to capture the semantics of the text. So it can be important what embedding are we using. In text it is not very important in what order are the words, but in code it could break everything. We can choose one of this embeddings:
+Embedding models take text as input, and return a long list of numbers used to capture the semantics of the text. So it can be important what embedding are we using. The order of words is not really important in text, but in code it could break everything. We can choose one of this embeddings:
 
 1. [BAAI/bge-base-en-v1.5](https://huggingface.co/Salesforce/codet5p-110m-embedding)
 2. [codesage/codesage-small](codesage/codesage-small)
 
 (I'm testing only free versions, so I skipped the [ada-002](https://platform.openai.com/docs/guides/embeddings))
 
-Additional information for RAG contains my [project](https://github.com/worthlane/quadratic_equation) from github, which solves quadratic equation. I'll try to describe some function by words and compare what context relates to this prompt with different embeddings. Context we can see by function from ```Response``` class. I've found it in ```llamaindex``` source code:
+Additional information for RAG contains my [project](https://github.com/worthlane/quadratic_equation) from github, which solves quadratic equation. I'll try to describe some function by words and compare what context relates to this prompt with different embeddings. We can see the context by function from the```Response``` class. I've found it in ```llamaindex``` source code:
 
 ```python
 class Response:
@@ -40,7 +40,7 @@ class Response:
 
 #### BAAI/bge-base-en-v1.5
 
-After tests I've noticed, that the context that program is finding, in the most cases is located in header files. I think that's because ```bge-base``` was made for text embedding, and it's hard for him to recognize code. My project has a lot of documentation, so, retriever gets information from header file, where documentation is located.
+After some tests I've noticed, that the context that program is finding, in the most cases is located in header files. I think that's because ```bge-base``` was made for text embedding, and it's hard for him to recognize code. My project has a lot of documentation, so, retriever gets information from header file, where documentation is located.
 
 #### codesage/codesage-small
 
@@ -68,11 +68,9 @@ This embedding is confused by html documentation code. So, what embedding you sh
 If you have documentation, it will be better to use ``` BAAI/bge-base-en-v1.5```, because it is easy for this embedding to find text description in project. If there is no documentation, it will be better to use ```codesage/codesage-small```, because it is created for finding code by natural language.
 
 
-
-
 ## LLM
 
-I've found three interesting LLM's to test. As RAG I would use my project that solves quadratic equation. I'll ask to write a function, that solves quadratic equations, using equation coefficients.
+I've found three interesting LLM's to test. As RAG I would use my project that solves quadratic equation. The prompt will ask an implementation of function, that solves quadratic equations, using equation coefficients.
 
 LLMs:
 1. Llama 3.1 (8B)
@@ -80,7 +78,7 @@ LLMs:
 3. deepseek-coder-v2 (16B)
 3. Code Llama (7B)
 
-(I tested every model on MacBook Pro with 8gb of RAM)
+(I've tested every model on MacBook Pro with 8gb of RAM)
 
 ### Llama 3.1
 Works pretty well. In six out of ten launches it returned well working code for my project. One time code worked almost correct (4/5 tests passed), two times partially correct (3/5) and in other cases code did not compile.
