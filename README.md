@@ -91,7 +91,7 @@ The shortest query time was 28.99s. The longest time was 56.6s. In average it ne
 This model is not as heavy as ```llama3```, so we can notice that in the query time. This model works much faster, but it has no benefit. Usually it gives answers like ```000``` or ```________```, not even at least a code. So this is very bad model for code generation.
 
 ### deepseek-coder-v2
-Deepseek is the heaviest model I've tested here. It was actually created for code generation. But on the first launch it became very clear, that for my configuration this model works too slow (It generated one answer for 20 minutes). It can generate working and good code, but it is too slow, not even comparable with ```llama3```.
+Deepseek is the heaviest model I've tested here. It was actually created for code generation. But on the first launch it became very clear, that for my configuration this model works too slow (It generated one answer for 20 minutes). It can generate correct code, but it is too slow, not even comparable with ```llama3```.
 
 ### Code Llama
 The same situation as with ```deepseek```. It gives answers, that are not better or worse than ```llama3```, but execution time increased.
@@ -107,6 +107,48 @@ It's interesting to check, what prompt should we write to get the most efficient
 3. RAG+, prompt- (We can leave prompt without any context).
 
 Let's check which strategy generates code better.
+
+### Measurements
+
+#### RAG-, PROMPT+
+
+| Attempt | Query time, sec | Accuracy | 
+|:--:|:--:|:--:|
+| 1 | 76.90 | Not compiling |
+| 2 | 54.45 | 5/5 tests passed |
+| 3 | 45.45 | Not compiling |
+| 4 | 48.68 | Not compiling |
+| 5 | 62.72 | Not compiling |
+| 6 | 129.80 | 0/5 tests passed |
+| 7 | 86.11 | Not compiling |
+| 8 | 51.70 | Not compiling |
+| 9 | 67.50 | Not compiling |
+| 10 | 55.00 | 0/5 tests passed |
+
+#### RAG+, PROMPT+
+
+| Attempt | Query time, sec | Accuracy | 
+|:--:|:--:|:--:|
+| 1 | 71.04 | 0/5 tests passed |
+| 2 | 91.89 | 0/5 tests passed |
+| 3 | 61.85 | 3/5 tests passed |
+| 4 | 79.61 | Not compiling |
+| 5 | 51.07 | Not compiling |
+
+#### RAG+, PROMPT-
+
+| Attempt | Query time, sec | Accuracy | 
+|:--:|:--:|:--:|
+| 1 | 56.60 | 5/5 tests passed |
+| 2 | 37.20 | 5/5 tests passed |
+| 3 | 68.50 | 3/5 tests passed |
+| 4 | 42.80 | 4/5 tests passed |
+| 5 | 42.17 | 5/5 tests passed |
+| 6 | 46.87 | 5/5 tests passed |
+| 7 | 49.88 | 0/5 tests passed |
+| 8 | 39.72 | 5/5 tests passed |
+| 9 | 39.26 | 5/5 tests passed |
+| 10 | 28.99 | 1/5 tests passed |
 
 ## Execution time
 
