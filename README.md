@@ -1,9 +1,17 @@
 In this project I'm trying to make good AI code generator (analogue of [github copilot](https://github.com/features/copilot)) with RAG (Retrieval Augmented Generation), using [llamaindex](https://www.llamaindex.ai).
 
-# How is RAG working?
+# What is RAG?
 
 ![](assets/rag.webp)
 Image source: [anyscale](https://www.anyscale.com/blog/a-comprehensive-guide-for-building-rag-based-llm-applications-part-1)
+
+If we have some specific data, it would be too expensive and long to retrain LLM, using this information. RAG can really help in these situations. Before passing the prompt to the LLM, we are trying to find the similar context from the additional files. 
+
+1. Embedding represents text as complex mathematical vector
+2. The embedding result passes into vector data base
+3. According to the distance, we retrieve the top-k relevant contexts
+4. Pass the context and prompt to LLM
+5. LLM generates answer
 
 # Improvements
 
