@@ -10,8 +10,8 @@ If we have some specific data, it would be too expensive and long to retrain LLM
 1. Embedding represents text as complex mathematical vector
 2. The embedding result passes into vector data base
 3. According to the distance, we retrieve the top-k relevant contexts
-4. Pass the context and prompt to LLM
-5. LLM generates answer
+4. The context and prompt pass to LLM
+5. LLM generates the response
 
 # Improvements
 
